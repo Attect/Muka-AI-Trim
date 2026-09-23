@@ -1,0 +1,60 @@
+name: 发布
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  binaries:
+    name: 打包 ${{ matrix.asset }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            asset: windows-x86_64
+            bin: muka-ai-trim.exe
+          - os: ubuntu-latest
+            asset: linux-x86_64
+            bin: muka-ai-trim
+          - os: macos-latest
+            asset: macos-aarch64
+            bin: muka-ai-trim
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: 构建
+        run: cargo build --release -p muka-bin
+      # Windows 自带的 tar 是 bsdtar，同样能产出 .tar.gz，三端一条命令。
+      - name: 打包
+        run: tar czf muka-ai-trim-${{ github.ref_name }}-${{ matrix.asset }}.tar.gz -C target/release ${{ matrix.bin }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: muka-ai-trim-*.tar.gz
+
+  release:
+    name: 建 Release 并挂上二进制
+    needs: binaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes "为 AI 请求节省 99% 的网络流量。安装与用法见 README。" \
+            --latest || true
+          gh release upload "$GITHUB_REF_NAME" assets/* --clobber

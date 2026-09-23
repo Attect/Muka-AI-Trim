@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-test:
+    name: 构建并测试（${{ matrix.os }}）
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: 构建
+        run: cargo build --release -p muka-bin
+      - name: 测试
+        run: cargo test --workspace
+      # 目前仓库还有风格类 clippy 提示，先只报告不卡构建。
+      - name: clippy
+        run: cargo clippy --workspace --all-targets
+        continue-on-error: true
