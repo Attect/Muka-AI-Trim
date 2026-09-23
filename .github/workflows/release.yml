@@ -42,7 +42,10 @@ jobs:
       - name: 构建
         run: cargo build --release -p muka-bin
       # Windows 自带的 tar 是 bsdtar，同样能产出 .tar.gz，三端一条命令。
+      # 必须显式用 bash：Windows 默认是 PowerShell，那里 ${TAG} 取不到环境变量，
+      # 文件名会少掉版本号。
       - name: 打包
+        shell: bash
         run: tar czf muka-ai-trim-${TAG}-${{ matrix.asset }}.tar.gz -C target/release ${{ matrix.bin }}
       - uses: actions/upload-artifact@v4
         with:
