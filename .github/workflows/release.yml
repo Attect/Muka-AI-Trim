@@ -3,12 +3,20 @@ name: 发布
 on:
   push:
     tags: ["v*"]
+  # 补发/重试用：Actions 页面手动运行，填要发布的 tag（默认 v0.1.0 那种形式）。
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 要发布的 tag；留空则取触发 ref
+        required: false
+        default: ""
 
 permissions:
   contents: write
 
 env:
   CARGO_TERM_COLOR: always
+  TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
   binaries:
@@ -35,7 +43,7 @@ jobs:
         run: cargo build --release -p muka-bin
       # Windows 自带的 tar 是 bsdtar，同样能产出 .tar.gz，三端一条命令。
       - name: 打包
-        run: tar czf muka-ai-trim-${{ github.ref_name }}-${{ matrix.asset }}.tar.gz -C target/release ${{ matrix.bin }}
+        run: tar czf muka-ai-trim-${TAG}-${{ matrix.asset }}.tar.gz -C target/release ${{ matrix.bin }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset }}
@@ -53,8 +61,9 @@ jobs:
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --title "$GITHUB_REF_NAME" \
+          # 这个 job 没有 checkout，没有 .git 可推断仓库，所以 -R 必须显式给。
+          gh release create "$TAG" -R "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
             --notes "为 AI 请求节省 99% 的网络流量。安装与用法见 README。" \
             --latest || true
-          gh release upload "$GITHUB_REF_NAME" assets/* --clobber
+          gh release upload "$TAG" -R "$GITHUB_REPOSITORY" assets/* --clobber
