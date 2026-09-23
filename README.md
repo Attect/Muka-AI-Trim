@@ -40,6 +40,10 @@ BLAKE3 摘要在转发前校验，校验不过就整包重发——**宁可慢�
 
 ## 30 秒上手
 
+从 [Releases](https://github.com/Attect/Muka-AI-Trim/releases) 下载对应平台的压缩包
+（`windows-x86_64` / `linux-x86_64` / `macos-aarch64`），解压得到 `muka-ai-trim`；
+也可以自己 `cargo build --release -p muka-bin`（见文末）。
+
 两台机器各放一个 `muka-ai-trim` 可执行文件。配置不用手写，各跑一次向导：
 
 ```console
