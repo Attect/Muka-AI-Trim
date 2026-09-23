@@ -1,0 +1,37 @@
+[package]
+name = "muka-gateway"
+description = "The two ends of the slow link: agent-facing listener and upstream-facing forwarder"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+muka-split.workspace = true
+muka-store.workspace = true
+muka-proto.workspace = true
+bytes.workspace = true
+blake3.workspace = true
+zstd = "0.13"
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tokio.workspace = true
+http = "1"
+http-body = "1"
+http-body-util = "0.1"
+hyper = { version = "1", features = ["server", "client", "http1", "http2"] }
+hyper-util = { version = "0.1", features = ["server", "client", "client-legacy", "http1", "http2", "tokio"] }
+tokio-stream = "0.1"
+toml = "0.8"
+hyper-rustls = { version = "0.27", default-features = false, features = ["http1", "http2", "ring", "webpki-roots"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+tokio-rustls = "0.26"
+rustls-pemfile = "2"
+rcgen = { version = "0.14", default-features = false, features = ["ring", "pem"] }
+futures-util = "0.3"
+pin-project-lite = "0.2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util"] }

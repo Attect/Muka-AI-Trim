@@ -1,0 +1,30 @@
+[package]
+name = "muka-bin"
+description = "muka-ai-trim command line: local end, peer end, pairing, diagnostics, traffic recorder"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "muka-ai-trim"
+path = "src/main.rs"
+
+[dependencies]
+muka-split.workspace = true
+muka-store.workspace = true
+muka-proto.workspace = true
+muka-gateway = { path = "../muka-gateway" }
+bytes.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+clap = { version = "4", features = ["derive"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+toml = "0.8"
+hyper = { version = "1", features = ["server", "client", "http1"] }
+hyper-util = { version = "0.1", features = ["server", "client", "client-legacy", "http1", "tokio"] }
+http-body-util = "0.1"
+rand = "0.9"
+

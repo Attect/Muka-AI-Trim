@@ -1,0 +1,32 @@
+[workspace]
+resolver = "2"
+members = ["crates/muka-split", "crates/muka-store", "crates/muka-proto", "crates/muka-gateway", "crates/muka-bin"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT"
+authors = ["Attect"]
+description = "为 AI 请求节省 99% 的网络流量"
+repository = "https://github.com/Attect/Muka-AI-Trim"
+
+[workspace.dependencies]
+bytes = { version = "1", features = ["serde"] }
+blake3 = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["raw_value"] }
+thiserror = "2"
+anyhow = "1"
+tracing = "0.1"
+tokio = { version = "1", features = ["rt-multi-thread", "net", "io-util", "sync", "time", "macros", "fs", "signal", "rt"] }
+
+muka-split = { path = "crates/muka-split" }
+muka-store = { path = "crates/muka-store" }
+muka-proto = { path = "crates/muka-proto" }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"

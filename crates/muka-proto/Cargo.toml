@@ -1,0 +1,15 @@
+[package]
+name = "muka-proto"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+muka-split.workspace = true
+zstd = "0.13"
+muka-store.workspace = true
+bytes.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true

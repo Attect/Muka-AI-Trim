@@ -1,0 +1,10 @@
+# Build output
+/target
+**/*.pdb
+
+# Machine-specific: this pins target-dir to a drive letter, which would break
+# someone else's clone. Keep it local.
+/.cargo/config.toml
+
+# Scratch from running the binary in the tree
+*.log
